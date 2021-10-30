@@ -328,3 +328,154 @@ Pindah ke directory `/etc/apache2/sites-available` kemudian buka file `super.fra
 
 Ketika menjalankan command `lynx www.super.franky.d05.com/publi`(lokasi yang tidak ada) pada client akan muncul halaman
 ![12.2](imgs/12.2.JPG)
+
+## no. 13
+
+Luffy juga meminta Nami untuk dibuatkan konfigurasi virtual host. Virtual host ini bertujuan untuk dapat mengakses file asset www.super.franky.yyy.com/public/js menjadi www.super.franky.yyy.com/js.
+
+### Jawab
+
+Pindah ke directory `/etc/apache2/sites-available` kemudian buka file `super.franky.d05.com` dan tambahkan:
+
+```bash
+        Alias "/js" "/var/www/super.franky.d05.com/public/js"
+```
+
+![13.1](imgs/13.1.JPG)
+
+Ketika menjalankan command `lynx www.super.franky.d05.com/js` pada client akan muncul halaman
+![13.2](imgs/13.2.JPG)
+
+## no. 14
+
+Dan Luffy meminta untuk web www.general.mecha.franky.yyy.com hanya bisa diakses dengan port 15000 dan port 15500.
+
+### Jawab
+
+Pertama, pindah ke directory `/etc/apache2/sites-available`.Kemudian copy file `000-default.conf` menjadi file `general.mecha.franky.d05.com.conf`
+
+![14.1](imgs/14.1.JPG)
+
+Lalu setting file `general.mecha.franky.d05.com.conf` agar memiliki `<VirtualHost *:15000 *:15500>`, line `ServerName general.mecha.franky.d05.com`, `ServerAlias www.general.mecha.franky.d05.com`, dan `DocumentRoot /var/www/general.mecha.franky.d05.com`.
+
+![14.2](imgs/14.2.JPG)
+
+Kemudian tambahkan port 15000 dan 15500 pada file `/etc/apache2/ports.conf` dengan menambahkan:
+
+```bash
+    Listen 15000
+    Listen 15500
+```
+
+![14.3](imgs/14.3.JPG)
+
+Kemudian bikin directory baru dengan nama `general.mecha.franky.d05.com` pada `/var/www/` menggunakan command `mkdir /var/www/general.mecha.franky.d05.com`. lalu copy isi dari folder `general.mecha.franky` yang telah didownload ke `/var/www/general.mecha.franky.d05.com`.
+
+Setelah itu jalankan command `a2ensite general.mecha.franky.d05.com` dan `service apache2 restart`
+![14.4](imgs/14.4.JPG)
+
+Ketika menjalankan command `lynx www.general.mecha.franky.d05.com:15000` atau `lynx www.general.mecha.franky.d05.com:15500` pada client akan muncul halaman
+![14.5](imgs/14.5.JPG)
+
+## no. 15
+
+dengan authentikasi username luffy dan password onepiece dan file di /var/www/general.mecha.franky.yyy
+
+### Jawab
+
+Pertama, jalankan command `htpasswd -c /etc/apache2/.htpasswd luffy` untuk membuat file yang menyimpan username dan password kedalam file `/etc/apache2/.htpasswd` dengan user `luffy`, lalu akan ada prompt untuk memasukkan dan mengkonfirmasi password.
+
+![15.1](imgs/15.1.JPG)
+Kemudian, edit file `/etc/apache2/sites-available/general.mecha.franky.d05.com.conf` dengan menambahkan:
+
+```bash
+    <Directory /var/www/general.mecha.franky.d05.com>
+        Options +FollowSymLinks -Multiviews
+        AllowOverride All
+    </Directory>
+```
+
+![15.2](imgs/15.2.JPG)
+
+Lalu, edit file `/var/www/general.mecha.franky.d05.com/.htaccess` menjadi:
+
+```bash
+    AuthType Basic
+    AuthName "Restricted Content"
+    AuthUserFile /etc/apache2/.htpasswd
+    Require valid-user
+```
+
+![15.3](imgs/15.3.JPG)
+
+Ketika menjalankan command `lynx www.general.mecha.franky.d05.com:15000` atau `lynx www.general.mecha.franky.d05.com:15500` pada client akan muncul halaman yang meminta autentikasi
+![15.4](imgs/15.4.JPG)
+![15.5](imgs/15.5.JPG)
+
+## no. 16
+
+Dan setiap kali mengakses IP EniesLobby akan diahlikan secara otomatis ke www.franky.yyy.com
+
+### Jawab
+
+Problem : Karena tidak bisa mengakses IP EniesLobby, maka IP yang kami alihkan adalah ketika mengakses IP Skypie
+Edit file `/var/www/html/.htaccess` dengan menambahkan:
+
+```bash
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{HTTP_HOST} ^192\.194\.2\.4$
+    RewriteRule ^(.*)$ http://www.franky.d05.com [L,R=301]
+```
+
+![16.1](imgs/16.1.JPG)
+
+Kemudian, edit file `/etc/apache2/sites-available/000-default.conf` dengan menambahkan:
+
+```bash
+    <Directory /var/www/html>
+        Options +FollowSymLinks -Multiviews
+        AllowOverride All
+    </Directory>
+```
+
+![16.2](imgs/16.2.JPG)
+
+Ketika menjalankan command `lynx 192.194.2.4` pada client akan muncul halaman
+![16.3](imgs/16.3.JPG)
+
+## no. 17
+
+Dikarenakan Franky juga ingin mengajak temannya untuk dapat menghubunginya melalui website www.super.franky.yyy.com, dan dikarenakan pengunjung web server pasti akan bingung dengan randomnya images yang ada, maka Franky juga meminta untuk mengganti request gambar yang memiliki substring “franky” akan diarahkan menuju franky.png.
+
+### Jawab
+
+Pertama, edit file `/etc/apache2/sites-available/super.franky.d05.com.conf` dengan menambahkan:
+
+```bash
+    <Directory /var/www/super.franky.d05.com>
+        Options +FollowSymLinks -Multiviews
+        AllowOverride All
+    </Directory>
+```
+
+![17.1](imgs/17.1.JPG)
+
+Kemudian, edit file `/var/www/super.franky.d05.com/.htaccess` dengan menambahkan:
+
+```bash
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !franky.png
+    RewriteRule ^(.*)franky(.*)\.(jpg|gif|png)$ http://super.franky.d05.com/public/images/franky.png [L,R]
+```
+
+![17.2](imgs/17.2.JPG)
+
+Ketika menjalankan command `lynx super.franky.d05.com/public/images/franky.png` pada client akan muncul halaman
+![17.3](imgs/17.3.JPG)
+
+Ketika menjalankan command `lynx super.franky.d05.com/public/images/not-franky.JPG` pada client akan muncul halaman
+![17.4](imgs/17.4.JPG)
+
+Ketika menjalankan command `lynx super.franky.d05.com/public/images/car.JPG` pada client akan muncul halaman
+![17.5](imgs/17.5.JPG)
