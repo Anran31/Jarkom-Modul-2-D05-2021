@@ -211,3 +211,120 @@ Mengedit file `/etc/bind/sunnygo/mecha.franky.d05.com` dengan menambahkan:
 ```
 
 ![7.1](imgs/7.1.JPG)
+
+## no. 8
+
+Setelah melakukan konfigurasi server, maka dilakukan konfigurasi Webserver. Pertama dengan webserver www.franky.yyy.com. Pertama, luffy membutuhkan webserver dengan DocumentRoot pada /var/www/franky.yyy.com.
+
+Di Skypie:
+Pertama, install `apache2`, `php`, dan `libapache2-mod-php7.0`
+![8.1](imgs/8.1.JPG)
+
+Kemudian melakukan `wget` untuk mendownload file yang diperlukan. Setelah itu diunzip sehinggan menampilkan folder-folder seperti ini.
+
+![8.2](imgs/8.2.JPG)
+
+Setelah itu, pindah ke directory `/etc/apache2/sites-available`.Kemudian copy file `000-default.conf` menjadi file `franky.d05.com.conf`
+
+![8.3](imgs/8.3.JPG)
+
+Lalu setting file `franky.d05.com.conf` agar memiliki line `ServerName franky.d05.com`, `ServerAlias www.franky.d05.com`, dan `DocumentRoot /var/www/franky.d05.com`.
+
+![8.4](imgs/8.4.JPG)
+
+Kemudian bikin directory baru dengan nama `franky.d05.com` pada `/var/www/` menggunakan command `mkdir /var/www/franky.d05.com`. lalu copy isi dari folder `franky` yang telah didownload ke `/var/www/franky.d05.com`.
+
+Setelah itu jalankan command `a2ensite franky.d05.com` dan `service apache2 restart`
+![8.5](imgs/8.5.JPG)
+
+Ketika menjalankan command `lynx www.franky.d05.com` pada client akan muncul halaman
+![8.6](imgs/8.6.JPG)
+
+## no. 9
+
+Setelah itu, Luffy juga membutuhkan agar url www.franky.yyy.com/index.php/home dapat menjadi menjadi www.franky.yyy.com/home.
+
+### Jawab
+
+Pertama, jalankan perintah `a2enmod rewrite` kemudian `service apache2 restart`.
+
+Kemudian pindah ke directory `/var/www/franky.d05.com` dan buat file `.htaccess` dengan isi file:
+
+```bash
+    RewriteEngine On
+    RewriteRule ^home$ index.php/home
+```
+
+![9.1](imgs/9.1.JPG)
+
+Kemudian buka file `/etc/apache2/sites-available/franky.d05.com.conf` dan tambahkan:
+
+```bash
+    <Directory /var/www/franky.d05.com>
+        Options +FollowSymLinks -Multiviews
+        AllowOverride All
+    </Directory>
+```
+
+![9.2](imgs/9.2.JPG)
+
+Ketika menjalankan command `lynx www.franky.d05.com/home` pada client akan muncul halaman
+![9.3](imgs/9.3.JPG)
+
+## no. 10
+
+Setelah itu, pada subdomain www.super.franky.yyy.com, Luffy membutuhkan penyimpanan aset yang memiliki DocumentRoot pada /var/www/super.franky.yyy.com
+
+### Jawab
+
+Pertama, pindah ke directory `/etc/apache2/sites-available`.Kemudian copy file `000-default.conf` menjadi file `super.franky.d05.com.conf`
+
+![10.1](imgs/10.1.JPG)
+
+Lalu setting file `super.franky.d05.com.conf` agar memiliki line `ServerName super.franky.d05.com`, `ServerAlias www.super.franky.d05.com`, dan `DocumentRoot /var/www/super.franky.d05.com`.
+
+![10.2](imgs/10.2.JPG)
+
+Kemudian bikin directory baru dengan nama `super.franky.d05.com` pada `/var/www/` menggunakan command `mkdir /var/www/super.franky.d05.com`. lalu copy isi dari folder `super.franky` yang telah didownload ke `/var/www/super.franky.d05.com`.
+
+Setelah itu jalankan command `a2ensite super.franky.d05.com` dan `service apache2 restart`
+![10.3](imgs/10.3.JPG)
+
+Ketika menjalankan command `lynx www.super.franky.d05.com` pada client akan muncul halaman
+![10.4](imgs/10.4.JPG)
+
+## no. 11
+
+Akan tetapi, pada folder /public, Luffy ingin hanya dapat melakukan directory listing saja.
+
+### Jawab
+
+Pindah ke directory `/etc/apache2/sites-available` kemudian buka file `super.franky.d05.com` dan tambahkan:
+
+```bash
+    <Directory /var/www/super.franky.d05.com/public>
+        Options +Indexes
+    </Directory>
+```
+
+![11.1](imgs/11.1.JPG)
+
+Ketika menjalankan command `lynx www.super.franky.d05.com/public` pada client akan muncul halaman
+![11.2](imgs/11.2.JPG)
+
+## no. 12
+
+Tidak hanya itu, Luffy juga menyiapkan error file 404.html pada folder /errors untuk mengganti error kode pada apache .
+
+### Jawab
+
+Pindah ke directory `/etc/apache2/sites-available` kemudian buka file `super.franky.d05.com` dan tambahkan:
+
+```bash
+        ErrorDocument 404 /error/404.html
+```
+
+![12.1](imgs/12.1.JPG)
+
+Ketika menjalankan command `lynx www.super.franky.d05.com/publi`(lokasi yang tidak ada) pada client akan muncul halaman
+![12.2](imgs/12.2.JPG)
