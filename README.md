@@ -8,7 +8,7 @@
 
 ### Setting Topologi
 
-![0.1](./imgs/0.1.jpg)
+![0.1](imgs/0.1.JPG)
 
 ### Edit Konfigurasi Network
 
