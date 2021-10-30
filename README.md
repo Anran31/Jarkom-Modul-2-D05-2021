@@ -14,27 +14,27 @@
 
 #### Foosha (Router)
 
-![0.2](imgs/0.2.jpg)
+![0.2](imgs/0.2.JPG)
 
 #### EniesLobby (DNS Master)
 
-![0.3](imgs/0.3.jpg)
+![0.3](imgs/0.3.JPG)
 
 #### Water7 (DNS Slave)
 
-![0.4](imgs/0.4.jpg)
+![0.4](imgs/0.4.JPG)
 
 #### Skypie (Web Server)
 
-![0.5](imgs/0.5.jpg)
+![0.5](imgs/0.5.JPG)
 
 #### Loguetown (Client)
 
-![0.6](imgs/0.6.jpg)
+![0.6](imgs/0.6.JPG)
 
 #### Alabasta (Client)
 
-![0.7](imgs/0.7.jpg)
+![0.7](imgs/0.7.JPG)
 
 ## no. 1
 
@@ -43,13 +43,13 @@ EniesLobby akan dijadikan sebagai DNS Master, Water7 akan dijadikan DNS Slave, d
 ### Jawab
 
 Menjalankan command `iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.194.0.0/16` yang digunakan supaya dapat terhubung ke jaringan luar pada router `Foosha`
-![1.1](imgs/1.1.jpg)
+![1.1](imgs/1.1.JPG)
 
 Kemudian menambahkan command `iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.194.0.0/16` ke `/root/.bashrc` agar dijalankan setiap kali project distart dengan command `echo "iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.194.0.0/16" >> /root/.bashrc`
-![1.2](imgs/1.2.jpg)
+![1.2](imgs/1.2.JPG)
 
 Setelah itu pada semua node lainnya ditambahkan command `echo "nameserver 192.168.122.0"` untuk setting IP DNS ke `/root/.bashrc` agar dijalankan setiap kali project distart dengan command `echo 'echo "nameserver 192.168.122.1" > /etc/resolv.conf' >> /root/.bashrc`
-![1.3](imgs/1.3.jpg)
+![1.3](imgs/1.3.JPG)
 
 ## no. 2
 
@@ -58,7 +58,7 @@ membuat website utama dengan mengakses franky.yyy.com dengan alias www.franky.yy
 ### Jawab
 
 pada EniesLobby jalankan command `apt-get update` dan `apt-get install bind9 -y` untuk menginstall bind9
-![2.1](imgs/2.1.jpg)
+![2.1](imgs/2.1.JPG)
 
 Kemudian mengedit `/etc/bind/named.conf.local` dengan menambahkan :
 
@@ -69,11 +69,11 @@ Kemudian mengedit `/etc/bind/named.conf.local` dengan menambahkan :
     };
 ```
 
-![2.2](imgs/2.2.jpg)
+![2.2](imgs/2.2.JPG)
 
 lalu dibuat folder kaizoku di `/etc/bind`. Lalu copy `/etc/bind/db.local` menjadi `/etc/bind/kaizoku/franky.d05.com`. Lalu konfigurasi file tersebut agar memiliki SOA `franky.d05.com.`, NS `franky.d05.com.`, record A yang mengarah ke `IP Skypie`, dan CNAME `www` pada `franky.d05.com.`.
-![2.3](imgs/2.3.jpg)
-![2.4](imgs/2.4.jpg)
+![2.3](imgs/2.3.JPG)
+![2.4](imgs/2.4.JPG)
 
 ## no. 3
 
@@ -88,7 +88,7 @@ Mengedit file `/etc/bind/kaizoku/franky.d05.com` dengan menambahkan:
         www.super       IN      CNAME   super.franky.d05.com.
 ```
 
-![3.1](imgs/3.1.jpg)
+![3.1](imgs/3.1.JPG)
 
 ## no. 4
 
@@ -105,11 +105,11 @@ Pertama, menambahkan zone pada `/etc/bind/named.conf.local` dengan menambahkan:
     };
 ```
 
-![4.1](imgs/4.1.jpg)
+![4.1](imgs/4.1.JPG)
 
 Lalu copy `/etc/bind/db.local` menjadi `/etc/bind/kaizoku/2.194.192.in-addr.arpa`. Lalu konfigurasi file tersebut agar memiliki SOA `franky.d05.com.`,`2.194.192.in-addr.arpa.` yang memiliki NS `franky.d05.com.`, dan `4` yang merupakan byte ke-4 IP EniesLobby memiliki PTR `franky.d05.com.`.
 
-![4.2](imgs/4.2.jpg)
+![4.2](imgs/4.2.JPG)
 
 ## no. 5
 
@@ -131,7 +131,7 @@ Pertama edit zone `franky.d05.com` pada `/etc/bind/named.conf.local` menjadi:
     };
 ```
 
-![5.1](imgs/5.1.jpg)
+![5.1](imgs/5.1.JPG)
 
 Di Water7:
 Jalankan command `apt-get update` dan `apt-get install bind9 -y` untuk menginstall bind9
@@ -146,7 +146,7 @@ Kemudian mengedit `/etc/bind/named.conf.local` dengan menambahkan :
     };
 ```
 
-![5.2](imgs/5.2.jpg)
+![5.2](imgs/5.2.JPG)
 
 ## no. 6
 
@@ -163,21 +163,21 @@ Pertama, mengedit file `/etc/bind/kaizoku/franky.d05.com` dengan menambahkan:
         mecha   IN      NS      ns1
 ```
 
-![6.1](imgs/6.1.jpg)
+![6.1](imgs/6.1.JPG)
 
 Kemudian mengedit file `/etc/bind/named.conf.options` dengan comment bagian `dnssec-validation auto;` dan menambahkan line `allow-query{any;};`.
 
-![6.2](imgs/6.2.jpg)
+![6.2](imgs/6.2.JPG)
 
 Pastikan sudah ada line `allow-transfer { "IP Water7"; };` pada zone `franky.d05.com` di file `/etc/bind/named.conf.local`.
 
-![6.3](imgs/6.3.jpg)
+![6.3](imgs/6.3.JPG)
 
 Di Water7:
 
 Pertama edit file `/etc/bind/named.conf.options` dengan comment bagian `dnssec-validation auto;` dan menambahkan line `allow-query{any;};`.
 
-![6.2](imgs/6.2.jpg)
+![6.2](imgs/6.2.JPG)
 
 Kemudian menambahkan zone pada `/etc/bind/named.conf.local` dengan menambahkan:
 
@@ -188,12 +188,12 @@ Kemudian menambahkan zone pada `/etc/bind/named.conf.local` dengan menambahkan:
     };
 ```
 
-![6.4](imgs/6.4.jpg)
+![6.4](imgs/6.4.JPG)
 
 lalu dibuat folder sunnygo di `/etc/bind`. Lalu copy `/etc/bind/db.local` menjadi `/etc/bind/sunnygo/mecha.franky.d05.com`. Lalu konfigurasi file tersebut agar memiliki SOA `mecha.franky.d05.com.`, NS `mecha.franky.d05.com.`, record A yang mengarah ke `IP Skypie`, dan CNAME `www` pada `mecha.franky.d05.com.`.
 
-![6.5](imgs/6.5.jpg)
-![6.6](imgs/6.6.jpg)
+![6.5](imgs/6.5.JPG)
+![6.6](imgs/6.6.JPG)
 
 ## no. 7
 
@@ -210,4 +210,4 @@ Mengedit file `/etc/bind/sunnygo/mecha.franky.d05.com` dengan menambahkan:
         www.general     IN      CNAME   general.mecha.franky.d05.com.
 ```
 
-![7.1](imgs/7.1.jpg)
+![7.1](imgs/7.1.JPG)
